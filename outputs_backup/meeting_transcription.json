@@ -1,0 +1,343 @@
+{
+  "source_file": "project_nimbus_meeting.mp3",
+  "model": "whisper-1",
+  "segment_count": 56,
+  "segments": [
+    {
+      "chunk": 1,
+      "start": 0.0,
+      "end": 6.0,
+      "text": "Good morning everyone. This is the weekly engineering sync for Project Nimbus. Today"
+    },
+    {
+      "chunk": 1,
+      "start": 6.0,
+      "end": 13.08,
+      "text": "is Thursday, and we have four items on the agenda. The Kubernetes migration, the PostgreSQL"
+    },
+    {
+      "chunk": 1,
+      "start": 13.08,
+      "end": 20.28,
+      "text": "latency issue, the Q3 OKRs, and the hiring update. Priya, do you want to start with the"
+    },
+    {
+      "chunk": 1,
+      "start": 20.28,
+      "end": 21.28,
+      "text": "migration?"
+    },
+    {
+      "chunk": 1,
+      "start": 21.28,
+      "end": 28.28,
+      "text": "Sure, thanks Marcus. So the Kubernetes migration is about 70% done. We moved the authentication"
+    },
+    {
+      "chunk": 1,
+      "start": 30.72,
+      "end": 36.8,
+      "text": "service, and the billing service to the new EKS cluster last week. The main blocker right"
+    },
+    {
+      "chunk": 1,
+      "start": 36.8,
+      "end": 42.68,
+      "text": "now is the RIDIS cache. When we deployed it with Helm, the persistent volume claims were"
+    },
+    {
+      "chunk": 1,
+      "start": 42.68,
+      "end": 49.68,
+      "text": "failing, because of a misconfigured storage class. I opened a ticket, jira number nimpash482,"
+    },
+    {
+      "chunk": 1,
+      "start": 49.68,
+      "end": 54.0,
+      "text": "and I expect it to be fixed by Tuesday."
+    },
+    {
+      "chunk": 1,
+      "start": 54.0,
+      "end": 60.0,
+      "text": "Okay, good. Do we need anything from the DevOps team?"
+    },
+    {
+      "chunk": 2,
+      "start": 60.0,
+      "end": 65.68,
+      "text": "Yes, we need Thomas to approve the Terraform changes for the VPC peering."
+    },
+    {
+      "chunk": 2,
+      "start": 65.68,
+      "end": 72.08,
+      "text": "Without that, the pods in the staging namespace cannot reach the legacy database."
+    },
+    {
+      "chunk": 2,
+      "start": 72.08,
+      "end": 76.04,
+      "text": "I can review the Terraform pull request this afternoon."
+    },
+    {
+      "chunk": 2,
+      "start": 76.04,
+      "end": 80.44,
+      "text": "I saw it in GitHub yesterday, but I did not have time."
+    },
+    {
+      "chunk": 2,
+      "start": 80.44,
+      "end": 86.32,
+      "text": "Just to confirm, are we still using the T3 large instances for the worker nodes, or did"
+    },
+    {
+      "chunk": 2,
+      "start": 86.32,
+      "end": 89.12,
+      "text": "we switch to Graviton?"
+    },
+    {
+      "chunk": 2,
+      "start": 89.12,
+      "end": 91.16,
+      "text": "We switched to Graviton."
+    },
+    {
+      "chunk": 2,
+      "start": 91.16,
+      "end": 97.64,
+      "text": "The ARM-based instances are about 20% cheaper, and our Docker image is now built for both"
+    },
+    {
+      "chunk": 2,
+      "start": 97.64,
+      "end": 98.64,
+      "text": "architectures."
+    },
+    {
+      "chunk": 2,
+      "start": 98.64,
+      "end": 99.64,
+      "text": "Great."
+    },
+    {
+      "chunk": 2,
+      "start": 99.64,
+      "end": 105.52,
+      "text": "Let's move to item 2, the PostgreSQL latency issue."
+    },
+    {
+      "chunk": 2,
+      "start": 105.52,
+      "end": 108.16,
+      "text": "Thomas, what did you find?"
+    },
+    {
+      "chunk": 2,
+      "start": 108.16,
+      "end": 115.2,
+      "text": "So, the P99 latency on the order's endpoint went from about 80 milliseconds to almost"
+    },
+    {
+      "chunk": 2,
+      "start": 115.36,
+      "end": 119.16,
+      "text": "400 milliseconds after the release on the 12th."
+    },
+    {
+      "chunk": 2,
+      "start": 119.16,
+      "end": 120.0,
+      "text": "Ironic, right?"
+    },
+    {
+      "chunk": 3,
+      "start": 120.0,
+      "end": 126.16,
+      "text": "analyze on the slope queries, and the problem is a missing composite index on the orders table,"
+    },
+    {
+      "chunk": 3,
+      "start": 126.16,
+      "end": 132.72,
+      "text": "on customer ID, and created that. Someone dropped it during the schema migration with Alembic."
+    },
+    {
+      "chunk": 3,
+      "start": 134.0,
+      "end": 136.16,
+      "text": "Ouch! Is there a fix ready?"
+    },
+    {
+      "chunk": 3,
+      "start": 137.44,
+      "end": 142.48,
+      "text": "Yes. I wrote a new migration that recreates the index concurrently,"
+    },
+    {
+      "chunk": 3,
+      "start": 142.48,
+      "end": 147.84,
+      "text": "so it will not lock the table. I also added a check in our CI pipeline,"
+    },
+    {
+      "chunk": 3,
+      "start": 147.84,
+      "end": 155.44,
+      "text": "using pgstat statements, so we get an alert in metadog if any query goes above 200 milliseconds."
+    },
+    {
+      "chunk": 3,
+      "start": 156.72,
+      "end": 164.32,
+      "text": "That's really helpful. From the product side, customers definitely noticed. We had 11 support"
+    },
+    {
+      "chunk": 3,
+      "start": 164.32,
+      "end": 170.48,
+      "text": "tickets about slow checkout in the last week, and our NPS score dropped by 3 points."
+    },
+    {
+      "chunk": 3,
+      "start": 170.48,
+      "end": 179.12,
+      "text": "Thanks, Aisha. Okay, item 3, the Q3OKRs. Aisha, can you give us the summary?"
+    },
+    {
+      "chunk": 4,
+      "start": 180.0,
+      "end": 185.0,
+      "text": "Sure. We have three key results for this quarter."
+    },
+    {
+      "chunk": 4,
+      "start": 185.0,
+      "end": 190.0,
+      "text": "First, reduce checkout abandonment from 18% to 12%."
+    },
+    {
+      "chunk": 4,
+      "start": 190.0,
+      "end": 196.0,
+      "text": "We are currently at 14%, so we are on track, but not finished."
+    },
+    {
+      "chunk": 4,
+      "start": 196.0,
+      "end": 203.0,
+      "text": "Second, launch the new recommendation engine, which uses the embedding model from the data science team."
+    },
+    {
+      "chunk": 4,
+      "start": 203.0,
+      "end": 212.0,
+      "text": "That one is delayed, because the vector database, we chose Pinecone, needs a security review from the compliance team."
+    },
+    {
+      "chunk": 4,
+      "start": 212.0,
+      "end": 219.0,
+      "text": "And third, achieve SOC 2 type 2 readiness. We are about halfway there."
+    },
+    {
+      "chunk": 4,
+      "start": 219.0,
+      "end": 223.0,
+      "text": "What is the risk on the SOC 2 work?"
+    },
+    {
+      "chunk": 4,
+      "start": 223.0,
+      "end": 231.0,
+      "text": "The main risk is the audit logging. We need every access to customer data to be logged and retained for one year."
+    },
+    {
+      "chunk": 4,
+      "start": 231.0,
+      "end": 236.0,
+      "text": "Right now we only keep logs in CloudWatch for 30 days."
+    },
+    {
+      "chunk": 4,
+      "start": 236.0,
+      "end": 240.0,
+      "text": "We could export the logs to S3 with a live site."
+    },
+    {
+      "chunk": 5,
+      "start": 240.0,
+      "end": 245.8,
+      "text": "policy and move them to Glacier after 90 days. That would be cheap and it would"
+    },
+    {
+      "chunk": 5,
+      "start": 245.8,
+      "end": 253.28,
+      "text": "meet the retention requirement. Perfect, let's take that offline and write it up."
+    },
+    {
+      "chunk": 5,
+      "start": 253.28,
+      "end": 260.24,
+      "text": "Last item, hiring. We have two open roles, a senior back-end engineer with Go and"
+    },
+    {
+      "chunk": 5,
+      "start": 260.24,
+      "end": 266.2,
+      "text": "gRPC experience and a machine learning engineer for the recommendation work. We"
+    },
+    {
+      "chunk": 5,
+      "start": 266.2,
+      "end": 271.64,
+      "text": "have three candidates in the final round. Priya and Thomas, please submit your"
+    },
+    {
+      "chunk": 5,
+      "start": 271.64,
+      "end": 278.86,
+      "text": "interview feedback in Greenhouse by Friday. We'll do. Yes, I will have mine"
+    },
+    {
+      "chunk": 5,
+      "start": 278.86,
+      "end": 285.72,
+      "text": "done tomorrow. Great. To summarize the action items, Priya will fix the Redis"
+    },
+    {
+      "chunk": 5,
+      "start": 285.72,
+      "end": 291.04,
+      "text": "storage class issue by Tuesday. Thomas will review the Terraform pull request"
+    },
+    {
+      "chunk": 5,
+      "start": 291.52,
+      "end": 296.92,
+      "text": "and deploy the index migration. Aisha will schedule the Pinecone security"
+    },
+    {
+      "chunk": 5,
+      "start": 296.92,
+      "end": 301.84,
+      "text": "review and draft the log retention plan with"
+    },
+    {
+      "chunk": 6,
+      "start": 300.0,
+      "end": 305.0,
+      "text": "And everyone, please send your greenhouse feedback by Friday."
+    },
+    {
+      "chunk": 6,
+      "start": 305.0,
+      "end": 308.0,
+      "text": "Thanks everyone, see you next week!"
+    }
+  ]
+}
